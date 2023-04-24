@@ -6,9 +6,9 @@
     width: 170px;
 }
 
-.igm {
+.img {
     width: 100%;
-    background-color: lightgray;
+    /*background-color: lightgray;*/
     height: 100px;
     margin: 0 auto;
     background-color: var(--tg-theme-button-color);
