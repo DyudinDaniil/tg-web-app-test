@@ -1,10 +1,61 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './ProductList.css'
+import ProductItem from "../ProductItem/ProductItem";
+import {useTelegram} from "../../hooks/useTelegram";
+
+const products = [
+  {id: '1', title: 'Джинсы', price: 5000, description: 'Джинсы синего цвета, прямые'},
+  {id: '2', title: 'Куртка', price: 12000, description: 'Куртка зеленого цвета, зимняя'},
+  {id: '3', title: 'Джинсы 2', price: 6000, description: 'Джинсы синего цвета, прямые'},
+  {id: '4', title: 'Куртка 2', price: 50000, description: 'Куртка зеленого цвета, зимняя'},
+  {id: '5', title: 'Джинсы 3', price: 2500, description: 'Джинсы синего цвета, прямые'},
+  {id: '6', title: 'Куртка 3', price: 57000, description: 'Куртка зеленого цвета, зимняя'},
+  {id: '7', title: 'Джинсы 4', price: 12000, description: 'Джинсы синего цвета, прямые'},
+  {id: '8', title: 'Куртка 4', price: 10000, description: 'Куртка зеленого цвета, зимняя'},
+]
+
+const getTotalPrice = (items = []) => {
+  return items.reduce((acc, item) => {
+    return acc += item.price
+  }, 0)
+}
 
 const ProductList = () => {
+
+  const [addedItems, setAddedItems] = useState([]);
+  const {tg} = useTelegram();
+
+  const onAdd = (product) => {
+    const alreadyAdded = addedItems.find(item => item.id === product.id);
+    let newItems = [];
+
+    if(alreadyAdded) {
+      newItems = addedItems.filter(item => item.id !== product.id);
+    } else {
+      newItems = [...addedItems, product];
+    }
+
+    setAddedItems(newItems);
+
+    if(newItems.length === 0) {
+      tg.MainButton.hide();
+    } else {
+      tg.MainButton.show();
+      tg.MainButton.setParams({
+        text: `Купить ${getTotalPrice(newItems)}`
+      })
+    }
+  }
+
   return (
-    <div>
-      Product List
+    <div className="list">
+      {products.map(product => {
+        <ProductItem
+          product={product}
+          onAdd={onAdd}
+          className="item"
+        />
+      })}
     </div>
   );
 };
